@@ -1,0 +1,109 @@
+Using device: cpu
+
+============================================================
+LOADING DATA
+============================================================
+Loading embeddings from wiki.en.vec ...
+  Detected header: 2519370 words, 300 dimensions
+  Loaded 200000 words, dimension=300
+Loading embeddings from wiki.es.vec ...
+  Detected header: 985667 words, 300 dimensions
+  Loaded 200000 words, dimension=300
+
+Training dictionary:
+  Loaded 11977 pairs, skipped 0 (OOV)
+Test dictionary:
+  Loaded 2975 pairs, skipped 0 (OOV)
+
+Training pairs: 11977, Dim: 300
+
+============================================================
+INITIALIZING W
+============================================================
+  Computing Procrustes solution as warm start ...
+  Procrustes ||W^TW - I||_F = 9.101748e-06
+
+  --- Pre-training evaluation (init W) ---
+  Forward (EN -> ES):
+    P@1: 38.86% (1156/2975)
+    P@5: 67.50% (2008/2975)
+  Backward (ES -> EN):
+    P@1: 51.36% (1528/2975)
+    P@5: 73.34% (2182/2975)
+
+============================================================
+B-BP TRAINING
+  alpha=1.0, beta=1.0, gamma=0.01
+  optimizer=adam, lr=0.0001
+  epochs=100, batch_size=512
+============================================================
+  Epoch    1/100 | Loss: 0.722537 | Fwd: 0.359267 | Bwd: 0.359314 | Orth: 0.3956 | ||W^TW-I||: 0.774751
+  Epoch   10/100 | Loss: 0.699840 | Fwd: 0.339201 | Bwd: 0.337783 | Orth: 2.2855 | ||W^TW-I||: 2.320738
+  Epoch   20/100 | Loss: 0.699859 | Fwd: 0.337554 | Bwd: 0.335410 | Orth: 2.6895 | ||W^TW-I||: 2.701644
+  Epoch   30/100 | Loss: 0.699726 | Fwd: 0.336895 | Bwd: 0.334426 | Orth: 2.8405 | ||W^TW-I||: 2.847150
+  Epoch   40/100 | Loss: 0.699554 | Fwd: 0.336509 | Bwd: 0.333895 | Orth: 2.9150 | ||W^TW-I||: 2.918039
+  Epoch   50/100 | Loss: 0.699788 | Fwd: 0.336507 | Bwd: 0.333729 | Orth: 2.9551 | ||W^TW-I||: 2.956503
+  Epoch   60/100 | Loss: 0.699705 | Fwd: 0.336403 | Bwd: 0.333551 | Orth: 2.9750 | ||W^TW-I||: 2.976479
+  Epoch   70/100 | Loss: 0.699455 | Fwd: 0.336205 | Bwd: 0.333360 | Orth: 2.9890 | ||W^TW-I||: 2.987075
+  Epoch   80/100 | Loss: 0.699858 | Fwd: 0.336382 | Bwd: 0.333509 | Orth: 2.9968 | ||W^TW-I||: 2.997597
+  Epoch   90/100 | Loss: 0.699490 | Fwd: 0.336213 | Bwd: 0.333310 | Orth: 2.9967 | ||W^TW-I||: 3.000031
+  Epoch  100/100 | Loss: 0.699012 | Fwd: 0.335925 | Bwd: 0.333031 | Orth: 3.0056 | ||W^TW-I||: 3.005149
+
+  Total training time: 7.18s
+
+  Final ||W^TW - I||_F = 3.005149
+  ||W_final - W_init||_F = 1.474735
+
+============================================================
+B-BP EVALUATION
+============================================================
+
+  Forward (EN -> ES):
+    P@1: 37.88% (1127/2975)
+    P@5: 65.82% (1958/2975)
+
+  Backward (ES -> EN) via W^T:
+    P@1: 50.69% (1508/2975)
+    P@5: 72.61% (2160/2975)
+
+============================================================
+BIDIRECTIONAL METRICS
+============================================================
+  Bidirectional Consistency (BC): 44.29%
+    = (P@1_fwd + P@1_bwd) / 2 = (37.88 + 50.69) / 2
+
+  Direction Gap (DG): 12.81%
+    = |P@1_fwd - P@1_bwd| = |37.88 - 50.69|
+
+  Round-trip consistency (x -> Wx -> W^T(Wx)):
+    Mean cosine similarity(x, W^T W x): 0.910096
+    (1.0 = perfect round-trip, Xing achieves ~1.0 due to orthogonality)
+
+Saved: W_bbp.npy
+Saved: bbp_history.npz
+
+============================================================
+COMPARISON SUMMARY
+============================================================
+Metric                         Xing (Procrustes)    B-BP                
+----------------------------------------------------------------------
+  (Loading Xing W from W_procrustes.npy for comparison)
+
+  Evaluating Xing for comparison...
+  Xing Forward:
+    P@1: 38.86% (1156/2975)
+    P@5: 67.50% (2008/2975)
+  Xing Backward:
+    P@1: 51.36% (1528/2975)
+    P@5: 73.34% (2182/2975)
+
+Metric                         Xing                 B-BP                
+----------------------------------------------------------------------
+P@1 Forward (EN->ES)           38.86                37.88               
+P@5 Forward (EN->ES)           67.50                65.82               
+P@1 Backward (ES->EN)          51.36                50.69               
+P@5 Backward (ES->EN)          73.34                72.61               
+BC (avg P@1)                   45.11                44.29               
+DG (|fwd-bwd| P@1)             12.50                12.81               
+||W^TW - I||_F                 0.000009             3.005149            
+Round-trip sim                 ~1.000000            0.910096            

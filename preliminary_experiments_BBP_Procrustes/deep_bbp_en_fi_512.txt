@@ -1,0 +1,95 @@
+============================================================
+LOADING DATA
+============================================================
+Loading embeddings from wiki.en.vec ...
+  Detected header: 2519370 words, 300 dimensions
+  Loaded 200000 words, dimension=300
+Loading embeddings from wiki.fi.vec ...
+  Detected header: 2000000 words, 300 dimensions
+  Loaded 200000 words, dimension=300
+
+Training dictionary:
+  Loaded 10290 pairs, skipped 1206 (OOV)
+Test dictionary:
+  Loaded 2007 pairs, skipped 510 (OOV)
+
+Training pairs: 10290, Dim: 300
+
+============================================================
+PROCRUSTES BASELINE
+============================================================
+
+  Forward (src -> tgt):
+    P@1: 27.50% (552/2007)
+    P@5: 57.50% (1154/2007)
+  Backward (tgt -> src):
+    P@1: 38.17% (766/2007)
+    P@5: 64.52% (1295/2007)
+
+============================================================
+DEEP B-BP MODEL
+  Architecture: 300 -> 512 -> 300
+  Activation: LeakyReLU (alpha=0.01)
+  Weight params: 307,200
+  Bias params: 1,624 (forward + backward)
+  Total params: 308,824
+  alpha=1.0, beta=1.0, gamma=0.01
+  lr=0.001, epochs=200, batch_size=512
+============================================================
+
+  --- Pre-training evaluation ---
+  Forward:
+    P@1: 0.00% (0/2007)
+    P@5: 0.00% (0/2007)
+  Backward:
+    P@1: 0.00% (0/2007)
+    P@5: 0.00% (0/2007)
+
+  --- Training ---
+  Epoch    1/200 | Loss: 1.678251 | Fwd: 0.659676 | Bwd: 0.648551 | Orth: 37.0024
+  Epoch   20/200 | Loss: 0.876517 | Fwd: 0.371116 | Bwd: 0.348696 | Orth: 15.6705
+  Epoch   40/200 | Loss: 0.844593 | Fwd: 0.356270 | Bwd: 0.333541 | Orth: 15.4783
+  Epoch   60/200 | Loss: 0.826690 | Fwd: 0.348150 | Bwd: 0.324020 | Orth: 15.4520
+  Epoch   80/200 | Loss: 0.812337 | Fwd: 0.342095 | Bwd: 0.315865 | Orth: 15.4377
+  Epoch  100/200 | Loss: 0.802842 | Fwd: 0.337912 | Bwd: 0.310594 | Orth: 15.4336
+  Epoch  120/200 | Loss: 0.796229 | Fwd: 0.334537 | Bwd: 0.307259 | Orth: 15.4433
+  Epoch  140/200 | Loss: 0.788678 | Fwd: 0.331767 | Bwd: 0.302460 | Orth: 15.4451
+  Epoch  160/200 | Loss: 0.784677 | Fwd: 0.330148 | Bwd: 0.300176 | Orth: 15.4353
+  Epoch  180/200 | Loss: 0.779253 | Fwd: 0.327803 | Bwd: 0.297139 | Orth: 15.4310
+  Epoch  200/200 | Loss: 0.778464 | Fwd: 0.327815 | Bwd: 0.296226 | Orth: 15.4423
+
+  Total training time: 222.69s
+
+============================================================
+POST-TRAINING EVALUATION
+============================================================
+
+  Forward (src -> tgt):
+    P@1: 24.46% (491/2007)
+    P@5: 50.37% (1011/2007)
+  Backward (tgt -> src):
+    P@1: 33.18% (666/2007)
+    P@5: 58.59% (1176/2007)
+
+============================================================
+BIDIRECTIONAL METRICS
+============================================================
+  BC (Deep B-BP): 28.82%
+  DG (Deep B-BP): 8.72%
+  Round-trip similarity: 0.805373
+
+============================================================
+COMPARISON: PROCRUSTES vs DEEP B-BP
+============================================================
+
+Metric                         Procrustes      Pre-train       Deep B-BP       Delta     
+-------------------------------------------------------------------------------------
+P@1 Forward                    27.50           0.00            24.46           -3.04
+P@5 Forward                    57.50           0.00            50.37           -7.13
+P@1 Backward                   38.17           0.00            33.18           -4.98
+P@5 Backward                   64.52           0.00            58.59           -5.93
+BC (avg P@1)                   32.84           0.00            28.82           -4.01
+DG (|fwd-bwd| P@1)             10.66           —               8.72            -1.94
+Round-trip sim                 ~1.000          —               0.805373       
+
+Saved: deep_bbp_model.npz, deep_bbp_history.npz

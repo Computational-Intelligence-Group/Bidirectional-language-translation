@@ -1,0 +1,12 @@
+# Large word embedding files (too large for GitHub)
+*.vec
+*.vec.*
+
+# Large numpy/data files
+*.npy
+*.npz
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo

@@ -1,0 +1,95 @@
+============================================================
+STEP 1: Loading embeddings
+============================================================
+Loading embeddings from wiki.en.vec ...
+  Detected header: 2519370 words, 300 dimensions
+  Loaded 200000 words, dimension=300
+Loading embeddings from wiki.fi.vec ...
+  Detected header: 2000000 words, 300 dimensions
+  Loaded 200000 words, dimension=300
+
+============================================================
+STEP 2: Normalizing vectors to unit length
+============================================================
+  Sample source norms after normalization: [1.         1.         1.         0.99999994 1.        ]
+
+============================================================
+STEP 3: Loading bilingual dictionaries
+============================================================
+Training dictionary:
+  Loaded 10290 pairs, skipped 1206 (OOV)
+Test dictionary:
+  Loaded 2007 pairs, skipped 510 (OOV)
+
+  Training pairs: 10290
+  Test pairs: 2007
+  Source dim: 300, Target dim: 300
+
+============================================================
+METHOD 1: Mikolov (2013) Linear Transform (MSE, unnormalized)
+  Objective: min_W sum ||Wx_i - z_i||^2
+  Using UNNORMALIZED embeddings (as in original paper)
+============================================================
+  Training time: 0.616s
+
+  Forward (EN -> ES):
+  P@1: 0.75% (15/2007)
+  P@5: 2.44% (49/2007)
+
+  Backward (ES -> EN) via W^T:
+  P@1: 2.59% (52/2007)
+  P@5: 15.40% (309/2007)
+
+============================================================
+METHOD 2: Xing (2015) Orthogonal Transform - Procrustes (closed-form)
+  Objective: max_W sum (Wx_i)^T z_i  s.t. W^TW = I
+  Using NORMALIZED embeddings
+============================================================
+  Training time: 0.087s
+  Orthogonality check ||W^TW - I||_F = 9.258005e-06
+
+  Forward (EN -> ES):
+  P@1: 27.50% (552/2007)
+  P@5: 57.50% (1154/2007)
+
+  Backward (ES -> EN) via W^T (free from orthogonality):
+  P@1: 38.17% (766/2007)
+  P@5: 64.52% (1295/2007)
+
+============================================================
+METHOD 3: Xing (2015) Orthogonal Transform - Iterative
+  lr=1.0, n_iters=100
+  Gradient ascent + SVD re-orthogonalization each step
+============================================================
+  Iter 10/100: objective = 5649.0269
+  Iter 20/100: objective = 5649.2002
+  Iter 30/100: objective = 5649.2314
+  Iter 40/100: objective = 5649.2368
+  Iter 50/100: objective = 5649.2422
+  Iter 60/100: objective = 5649.2383
+  Iter 70/100: objective = 5649.2437
+  Iter 80/100: objective = 5649.2456
+  Iter 90/100: objective = 5649.2422
+  Iter 100/100: objective = 5649.2412
+  Training time: 8.457s
+  Orthogonality check ||W^TW - I||_F = 9.289703e-06
+
+  Forward (EN -> ES):
+  P@1: 27.45% (551/2007)
+  P@5: 57.50% (1154/2007)
+
+  Backward (ES -> EN) via W^T:
+  P@1: 38.17% (766/2007)
+  P@5: 64.52% (1295/2007)
+
+============================================================
+SUMMARY
+============================================================
+Method 1 (Mikolov): MSE loss, unnormalized, unconstrained W
+Method 2 (Procrustes): Cosine loss, normalized, orthogonal W (closed-form)
+Method 3 (Xing iter): Cosine loss, normalized, orthogonal W (iterative)
+
+Methods 2 and 3 should give nearly identical results.
+Both should outperform Method 1 (as shown in Xing Table 1 vs 2).
+
+Saved W matrices: W_procrustes.npy, W_xing_iterative.npy, W_mikolov.npy
