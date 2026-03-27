@@ -470,10 +470,10 @@ def main():
         mark = " <" if vl < best_val else ""
         print(f"{ep:>3} | {tr:>8.4f} | {fw:>8.4f} | {bw:>8.4f} | {cy:>8.4f} | {orth:>7.4f} | "
               f"{vl:>8.4f} | {b_en_de:>6.2f} | {b_de_en:>6.2f} | "
-              f"{lam:.2f} | {elapsed:>5.0f}{mark}", flush=True)
+              f"{lam:.3f} | {elapsed:>5.0f}{mark}", flush=True)
 
         csv_file.write(f"{ep},{tr:.4f},{fw:.4f},{bw:.4f},{cy:.4f},{orth:.4f},{vl:.4f},"
-                       f"{b_en_de:.2f},{b_de_en:.2f},{lam:.2f},{elapsed:.0f}\n")
+                       f"{b_en_de:.2f},{b_de_en:.2f},{lam:.4f},{elapsed:.0f}\n")
         csv_file.flush()
 
         torch.save({
